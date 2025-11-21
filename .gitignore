@@ -1,0 +1,12 @@
+# Visual Studio
+.vs/
+/x64/
+/SystemAu.a8a60469/
+
+# Project files
+*.vcxproj.user
+*.vcxproj.filters
+SystemAuditMonkey/
+
+# Assets folder (everything inside)
+Assets/
