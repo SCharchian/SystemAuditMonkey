@@ -62,7 +62,6 @@ HANDLE hConsole = 0x0;
 
 int main()
 {
- 
 	// Setup the CONSOLE for UTF-8 and ANSI escape sequences
     hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -117,24 +116,6 @@ int main()
 
     //SysInfo.nCPUTemp = GetCPUTemperature();
 
-/*
-    wprintf(L"===== SYSTEM AUDIT MONKEY (S.A.M.) says =====\n");
-    wprintf(L"User: %s\n", SysInfo.pszUsername);
-    wprintf(L"Computer: %s\n", SysInfo.pszComputername);
-    wprintf(L"IP Address: %s\n", SysInfo.pszIPAddress);
-    wprintf(L"OS: %s\n", SysInfo.pszOSName);
-    wprintf(L"Motherboard: %s\n", SysInfo.pszMotherboard);
-    wprintf(L"CPU: %s\n", SysInfo.pszCPU);
-    wprintf(L"GPU: %s\n", SysInfo.pszGPU);
-    wprintf(L"RAM: %.2fGB Total / %.2fGB Free\n", SysInfo.nMemoryTotal, SysInfo.nMemoryFree);
-    wprintf(L"Disk C: %.2fGB Total / %.2fGB Free\n", SysInfo.nDiskTotal, SysInfo.nDiskFree);
-    wprintf(L"Uptime: %s\n", SysInfo.pszUptime);
-    wprintf(L"Terminal: %s\n", SysInfo.pszTerminal);
-    wprintf(L"Admin?: %s", SysInfo.fIsAdmin ? L"true" : L"false");
-*/
-   // Doesn't work on MOST machines, sadface. wprintf(L"CPU Temp: %.2fc", SysInfo.nCPUTemp);
- 
-
     PresentSysInfo(SysInfo);
 }
 
@@ -170,7 +151,8 @@ BOOL GetSystemUptime(WCHAR* uptimeBuffer, LPDWORD bufferSize)
 }
 
 // HARDWARE INFO
-BOOL GetMotherboardInfo(WCHAR* mbBuffer, LPDWORD bufferSize) {
+BOOL GetMotherboardInfo(WCHAR* mbBuffer, LPDWORD bufferSize) 
+{
     if (!mbBuffer || !bufferSize || *bufferSize < 128) return FALSE;
 
     HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
@@ -251,7 +233,8 @@ BOOL GetMotherboardInfo(WCHAR* mbBuffer, LPDWORD bufferSize) {
     return TRUE;
 }
 
-BOOL GetCPUInfo(WCHAR* cpuBuffer, LPDWORD bufferSize) {
+BOOL GetCPUInfo(WCHAR* cpuBuffer, LPDWORD bufferSize) 
+{
     if (!cpuBuffer || !bufferSize || *bufferSize < 128) return FALSE;
 
     wcscpy_s(cpuBuffer, *bufferSize, L"Unknown CPU"); // Fallback/Default
@@ -268,7 +251,8 @@ BOOL GetCPUInfo(WCHAR* cpuBuffer, LPDWORD bufferSize) {
     return TRUE;
 }
 
-BOOL GetGPUInfo(WCHAR* gpuBuffer, LPDWORD bufferSize) {
+BOOL GetGPUInfo(WCHAR* gpuBuffer, LPDWORD bufferSize) 
+{
     if (!gpuBuffer || !bufferSize || *bufferSize < 64) return FALSE;
 
     wcscpy_s(gpuBuffer, *bufferSize, L"Unknown GPU"); // Fallback/Default
@@ -363,7 +347,8 @@ double GetCPUTemperature()
 */
 
 // Just do 2 floats
-BOOL GetMemoryInfo(double* totalGB, double* freeGB) {
+BOOL GetMemoryInfo(double* totalGB, double* freeGB) 
+{
     if (!totalGB || !freeGB) return FALSE;
 
     MEMORYSTATUSEX memInfo = { sizeof(MEMORYSTATUSEX) };
@@ -374,7 +359,8 @@ BOOL GetMemoryInfo(double* totalGB, double* freeGB) {
     return TRUE;
 }
 
-BOOL GetDiskInfo(double* totalDiskGB, double* freeDiskGB) {
+BOOL GetDiskInfo(double* totalDiskGB, double* freeDiskGB) 
+{
     if (!totalDiskGB || !freeDiskGB) return FALSE;
 
     ULARGE_INTEGER freeBytes, totalBytes;
@@ -386,7 +372,8 @@ BOOL GetDiskInfo(double* totalDiskGB, double* freeDiskGB) {
 }
 
 // returns things like cmd.exe, powershell.exe, VsDebugConsole.exe
-BOOL GetTerminalInfo(WCHAR* terminalBuffer, LPDWORD bufferSize) {
+BOOL GetTerminalInfo(WCHAR* terminalBuffer, LPDWORD bufferSize) 
+{
     if (!terminalBuffer || !bufferSize || *bufferSize < INFO_BUFFER_SIZE) return FALSE;
 
     DWORD currentPid = GetCurrentProcessId();
@@ -442,7 +429,8 @@ BOOL GetTerminalInfo(WCHAR* terminalBuffer, LPDWORD bufferSize) {
 }
 
 // Get OS information
-BOOL GetOSVersionInfo(WCHAR* osBuffer, LPDWORD bufferSize) {
+BOOL GetOSVersionInfo(WCHAR* osBuffer, LPDWORD bufferSize) 
+{
     if (!osBuffer || !bufferSize || *bufferSize < 128) return FALSE;
 
     HMODULE ntdll = GetModuleHandleW(L"ntdll.dll");
@@ -552,44 +540,11 @@ BOOL GetFirstNonLoopbackIPv4(WCHAR* ipBuffer, LPDWORD bufferSize)
 }
 
 ///////////////// OUTPUT //////////////////////
-// Color enums
-enum Colors { FG_BLACK = 0, FG_BLUE = 1, FG_GREEN = 2, FG_CYAN = 3, FG_RED = 4, FG_MAGENTA = 5, FG_YELLOW = 6, FG_WHITE = 7, BG_BLACK = 0, INTENSE = 8 };
-
-/*
-// Set console color
-void SetColor(int color) {
-    SetConsoleTextAttribute(hConsole, color);
-}
-*/
 
 // Simple 40x20 ASCII art (logo-like)
 void PrintASCIIArt() 
 {
-/*
 
-    const char* logoQuadrants[] = {
-        "\033[94m,.=:!!t3Z3z.,                  \033[0m\033[92m\033[0m",  // Top-left blue, but wavy - approximate split
-        "\033[94m:tt:::tt333EE3                  \033[0m\033[92m\033[0m",
-        "\033[94m Et:::ztt33EEEL\\ ''@Ee.,      .., \033[0m\033[92m\033[0m",
-        "\033[94m;tt:::tt333EE7\\ ;EEEEEEttttt33#   \033[0m\033[92m\033[0m",
-        "\033[94m:Et:::zt333EEQ.\\ $EEEEEttttt33QL   \033[0m\033[92m\033[0m",
-        "\033[94m it::::tt333EEF\\ @EEEEEEttttt33F    \033[0m\033[92m\033[0m",
-        "\033[94m;3=*^```\"*4EEV\\ :EEEEEEttttt33@.    \033[0m\033[92m\033[0m",
-        "\033[94m,.=::::!t=., `\\ @EEEEEEtttz33QF     \033[0m\033[92m\033[0m",
-        "\033[92m;t::::::::zt33)\\   \"4EEEtttji3P*      \033[0m\033[33m\033[0m",  // Bottom-left green, bottom-right orange
-        "\033[92m:t::::::::tt33.\\:Z3z..  `` ,..g.      \033[0m\033[33m\033[0m",
-        "\033[92m i::::::::zt33F\\ AEEEtttt::::ztF       \033[0m\033[33m\033[0m",
-        "\033[92m;:::::::::t33V\\ ;EEEttttt::::t3       \033[0m\033[33m\033[0m",
-        "\033[92m E::::::::zt33L\\ @EEEtttt::::z3F       \033[0m\033[33m\033[0m",
-        "\033[92m {3=*^```\"*4E3)\\ ;EEEtttt:::::tZ`      \033[0m\033[33m\033[0m",
-        "\033[92m            `\\ :EEEEtttt::::z7         \033[0m\033[33m\033[0m",
-        "\033[92m                \"VEzjt:;;z>*`          \033[0m\033[33m\033[0m"
-    };
-
-    for (int i = 0; i < 16; i++) {
-        printf("%s\n", logoQuadrants[i]);
-    }
- */
  // Prints the Windows FLAG ASCII art with ANSI escape codes for colors
     printf("\x1b[49m      \x1b[49;38;2;1;1;1m▀\x1b[49m  \x1b[38;2;134;134;134;49m▄\x1b[49m                          \x1b[m\n"
         "\x1b[49m    \x1b[38;2;248;187;142;49m▄\x1b[38;2;210;62;17;49m▄\x1b[49m \x1b[49;38;2;102;103;100m▀\x1b[49;38;2;0;0;0m▀\x1b[49m \x1b[38;2;0;0;0;49m▄\x1b[38;2;1;1;1;49m▄\x1b[49m                        \x1b[m\n"
@@ -652,8 +607,7 @@ void PresentSysInfo(const _SysInfo& info) {
     PrintLine(L"CPU", info.pszCPU, FG_RED);
     PrintLine(L"GPU", info.pszGPU, FG_RED);
 
-    //SetColor(FG_YELLOW);
-
+	// Display RAM usage and bar
 	int percentUsed = (int)(((info.nMemoryTotal - info.nMemoryFree) / info.nMemoryTotal) * 100);
     wprintf(L"\x1b[%d;40H\x1b[33mRAM    : %.0f GB Total / %.0f GB Free\n", 13, info.nMemoryTotal, info.nMemoryFree);
 	
@@ -671,9 +625,7 @@ void PresentSysInfo(const _SysInfo& info) {
     wprintf(L"]");
 
     // Display HDD usage and bar
-    //SetColor(FG_YELLOW);
     percentUsed = (int)(((info.nDiskTotal - info.nDiskFree) / info.nDiskTotal) * 100);
-    //wprintf(L"\x1b[%d;40HDisk   : %.0f GB Total / %.0f GB Free\n", 14, info.nDiskTotal, info.nDiskFree);
     wprintf(
         L"\x1b[%d;40H\x1b[33mDisk   : %.0f GB Total / %.0f GB Free\x1b[0m\n",
         14,
@@ -681,7 +633,6 @@ void PresentSysInfo(const _SysInfo& info) {
         info.nDiskFree
     );
 
-     
     // Display HDD usage bar
     nUsedChars = (percentUsed * nBarChars) / 100;
 
@@ -696,5 +647,4 @@ void PresentSysInfo(const _SysInfo& info) {
 
 	wprintf(L"\n\n");
 
-    //SetColor(FG_WHITE);
 }
