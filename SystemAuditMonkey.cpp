@@ -21,7 +21,8 @@
 
 
 // DEFINES / CONSTANTS
-#define INFO_BUFFER_SIZE 256
+#define INFO_BUFFER_SIZE UNLEN+64  // 64 extra for " (admin)" suffix and safety
+                                   //UNLEN is the Windows constant for maximum username length : 256 characters.
 
 struct _SysInfo {
     WCHAR pszUsername[INFO_BUFFER_SIZE];
@@ -82,6 +83,14 @@ int main()
 
     GetUserNameW(SysInfo.pszUsername, &BuffSize);
 
+    SysInfo.fIsAdmin = IsRunningAsAdmin();
+
+	// Add "admin" or "user" to username for display
+    if (SysInfo.fIsAdmin)
+        wcscat_s(SysInfo.pszUsername, _countof(SysInfo.pszUsername), L" (admin)");
+    else
+        wcscat_s(SysInfo.pszUsername, _countof(SysInfo.pszUsername), L" (user)");
+
     BuffSize = kBuffSize;
     GetComputerNameW(SysInfo.pszComputername, &BuffSize);
 
@@ -111,8 +120,6 @@ int main()
 
     BuffSize = kBuffSize;
     GetTerminalInfo(SysInfo.pszTerminal, &BuffSize);
-
-    SysInfo.fIsAdmin = IsRunningAsAdmin();
 
     //SysInfo.nCPUTemp = GetCPUTemperature();
 
